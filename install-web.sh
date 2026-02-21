@@ -32,13 +32,20 @@ fi
 if [ -d "$TARGET_DIR/.git" ]; then
     echo -e "${YELLOW}Aniweb directory already exists at $TARGET_DIR.${NC}"
     echo -e "${YELLOW}Updating from GitHub...${NC}"
+    
+    # Force fixing permissions and bypass git safety checks for the installer
+    sudo chown -R $(id -u):$(id -g) "$TARGET_DIR" || true
+    git config --global --add safe.directory "$TARGET_DIR" || true
+    
     cd "$TARGET_DIR"
     sudo git fetch --all || true
     sudo git reset --hard origin/main || sudo git reset --hard origin/master || true
+    sudo git clean -fd || true
 else
     echo -e "${YELLOW}Cloning Aniweb repository to $TARGET_DIR...${NC}"
-    git clone https://github.com/what256/aniweb.git "$TARGET_DIR"
+    git clone https://github.com/what256/aniweb.git "$TARGET_DIR" || sudo git clone https://github.com/what256/aniweb.git "$TARGET_DIR"
     cd "$TARGET_DIR"
+    sudo chown -R $(id -u):$(id -g) . || true
 fi
 
 # Make the internal install script executable and run it

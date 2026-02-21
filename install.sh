@@ -38,8 +38,11 @@ fi
 # 3. Check for updates (if in a git repository)
 if [ -d ".git" ]; then
     echo -e "${YELLOW}Checking for updates from Git repository...${NC}"
+    sudo chown -R $(id -u):$(id -g) . || true
+    git config --global --add safe.directory "$PWD" || true
     sudo git fetch --all || true
     sudo git reset --hard origin/main || sudo git reset --hard origin/master || true
+    sudo git clean -fd || true
     echo -e "${GREEN}✓ Source code is up to date.${NC}"
 else
     echo -e "${BLUE}ℹ Not a git repository, skipping git pull.${NC}"
