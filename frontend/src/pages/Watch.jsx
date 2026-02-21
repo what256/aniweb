@@ -18,7 +18,7 @@ export default function Watch() {
 
     useEffect(() => {
         // Fetch User Settings
-        fetch('http://localhost:5000/api/settings')
+        fetch('/api/settings')
             .then(res => res.json())
             .then(data => setSettings(data))
             .catch(() => console.error("Could not load settings"));
@@ -27,7 +27,7 @@ export default function Watch() {
             setLoading(true);
             setError('');
             try {
-                const res = await fetch(`http://localhost:5000/api/anime/watch/${encodeURIComponent(episodeId)}`);
+                const res = await fetch(`/api/anime/watch/${encodeURIComponent(episodeId)}`);
                 const data = await res.json();
 
                 if (data.message || !data.sources || data.sources.length === 0) {
@@ -48,7 +48,7 @@ export default function Watch() {
                 // If we have animeId, fetch the full anime info to get episode list for Next/Prev
                 if (animeId) {
                     try {
-                        const infoRes = await fetch(`http://localhost:5000/api/anime/info/${encodeURIComponent(animeId)}`);
+                        const infoRes = await fetch(`/api/anime/info/${encodeURIComponent(animeId)}`);
                         const infoData = await infoRes.json();
                         setAnimeInfo(infoData);
                     } catch (e) {

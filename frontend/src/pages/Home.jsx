@@ -15,14 +15,14 @@ export default function Home() {
             setLoading(true);
             try {
                 if (query) {
-                    const res = await fetch(`http://localhost:5000/api/anime/search?q=${encodeURIComponent(query)}`);
+                    const res = await fetch(`/api/anime/search?q=${encodeURIComponent(query)}`);
                     const data = await res.json();
                     setAnimeList(data.results || []);
                     setRecentList([]);
                 } else {
                     const [trendingRes, recentRes] = await Promise.all([
-                        fetch('http://localhost:5000/api/anime/trending'),
-                        fetch('http://localhost:5000/api/anime/recent')
+                        fetch('/api/anime/trending'),
+                        fetch('/api/anime/recent')
                     ]);
                     const trendingData = await trendingRes.json();
                     const recentData = await recentRes.json();

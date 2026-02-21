@@ -10,7 +10,7 @@ export default function AnimeDetails() {
     useEffect(() => {
         const fetchAnimeInfo = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/anime/info/${id}`);
+                const res = await fetch(`/api/anime/info/${id}`);
                 const data = await res.json();
                 setAnime(data);
             } catch (err) {

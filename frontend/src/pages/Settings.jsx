@@ -14,7 +14,7 @@ export default function Settings() {
     const [message, setMessage] = useState({ text: '', type: '' });
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/settings')
+        fetch('/api/settings')
             .then(res => res.json())
             .then(data => {
                 setSettings(data);
@@ -30,7 +30,7 @@ export default function Settings() {
         setSaving(true);
         setMessage({ text: '', type: '' });
         try {
-            const res = await fetch('http://localhost:5000/api/settings', {
+            const res = await fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(settings)
