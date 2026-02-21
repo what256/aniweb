@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Search, Play, MonitorPlay } from 'lucide-react';
+import { Search, Play, MonitorPlay, Settings as SettingsIcon } from 'lucide-react';
 import Home from './pages/Home';
 import AnimeDetails from './pages/AnimeDetails';
 import Watch from './pages/Watch';
+import Settings from './pages/Settings';
 
 function Navbar() {
     const [query, setQuery] = useState('');
@@ -35,6 +36,9 @@ function Navbar() {
                     />
                     <Search className="absolute left-4 top-2.5 w-5 h-5 text-gray-400" />
                 </form>
+                <Link to="/settings" className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
+                    <SettingsIcon className="w-6 h-6" />
+                </Link>
             </div>
         </nav>
     );
@@ -50,6 +54,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/anime/:id" element={<AnimeDetails />} />
                         <Route path="/watch/:episodeId" element={<Watch />} />
+                        <Route path="/settings" element={<Settings />} />
                     </Routes>
                 </main>
             </div>
