@@ -7,6 +7,8 @@ const DEFAULT_CONFIG = {
     provider: 'gogoanime', // fallback placeholder, Consumet defaults usually work best
     defaultQuality: 'auto',
     preferredSub: 'english',
+    autoPlayNextEpisode: true,
+    autoSkipIntro: false
 };
 
 // Ensure data directory exists

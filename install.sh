@@ -56,7 +56,51 @@ if docker compose ps | grep -q "Up"; then
 fi
 
 echo -e "${YELLOW}Building and starting Aniweb... (This may take a few minutes)${NC}"
-docker compose up -d --build
+sudo docker compose up -d --build
+
+# 5. Setup Global CLI Tool
+echo -e "${YELLOW}Installing global 'aniweb' CLI tool...${NC}"
+cat << 'EOF' | sudo tee /usr/local/bin/aniweb > /dev/null
+#!/bin/bash
+# Aniweb Global CLI
+ANIWEB_DIR="$HOME/aniweb"
+
+if [ ! -d "$ANIWEB_DIR" ]; then
+    echo "Error: Aniweb directory not found at $ANIWEB_DIR"
+    exit 1
+fi
+
+cd "$ANIWEB_DIR"
+
+case "$1" in
+    up|start)
+        sudo docker compose up -d
+        ;;
+    down|stop)
+        sudo docker compose down
+        ;;
+    restart)
+        sudo docker compose down && sudo docker compose up -d
+        ;;
+    logs)
+        shift
+        sudo docker compose logs -f "$@"
+        ;;
+    update)
+        curl -sSL https://raw.githubusercontent.com/what256/aniweb/main/install-web.sh | bash
+        ;;
+    *)
+        echo "Aniweb CLI - Usage:"
+        echo "  aniweb start    - Start the Aniweb servers"
+        echo "  aniweb stop     - Stop the Aniweb servers"
+        echo "  aniweb restart  - Restart the servers"
+        echo "  aniweb logs     - View live server logs"
+        echo "  aniweb update   - Update Aniweb to the newest version"
+        ;;
+esac
+EOF
+sudo chmod +x /usr/local/bin/aniweb
+echo -e "${GREEN}✓ 'aniweb' command is now available globally!${NC}"
 
 # 5. Output success message and LAN IP
 LOCAL_IP=$(hostname -I | awk '{print $1}' || echo "localhost")

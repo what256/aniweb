@@ -5,7 +5,9 @@ export default function Settings() {
     const [settings, setSettings] = useState({
         provider: 'gogoanime',
         defaultQuality: 'auto',
-        preferredSub: 'english'
+        preferredSub: 'english',
+        autoPlayNextEpisode: true,
+        autoSkipIntro: false
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -46,8 +48,11 @@ export default function Settings() {
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setSettings(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setSettings(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
     };
 
     if (loading) {
@@ -116,6 +121,36 @@ export default function Settings() {
                             <option value="english">English (Subbed)</option>
                             <option value="dub">English (Dubbed)</option>
                         </select>
+                    </div>
+
+                    <div className="pt-4 space-y-4">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <div className="relative">
+                                <input
+                                    type="checkbox"
+                                    name="autoPlayNextEpisode"
+                                    checked={settings.autoPlayNextEpisode}
+                                    onChange={handleChange}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-premium-900 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-premium-accent"></div>
+                            </div>
+                            <span className="text-sm font-medium text-white">Auto-Play Next Episode</span>
+                        </label>
+
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <div className="relative">
+                                <input
+                                    type="checkbox"
+                                    name="autoSkipIntro"
+                                    checked={settings.autoSkipIntro}
+                                    onChange={handleChange}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-premium-900 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-premium-accent"></div>
+                            </div>
+                            <span className="text-sm font-medium text-white">Auto-Skip Opening/Intro (Experimental)</span>
+                        </label>
                     </div>
                 </div>
 

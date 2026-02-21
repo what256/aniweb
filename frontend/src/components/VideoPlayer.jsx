@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import { Volume2, VolumeX, Maximize, Play, Pause, Settings } from 'lucide-react';
 
-export default function VideoPlayer({ url, poster }) {
+export default function VideoPlayer({ url, poster, onEnded }) {
     const videoRef = useRef(null);
     const containerRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -95,6 +95,7 @@ export default function VideoPlayer({ url, poster }) {
                 onTimeUpdate={handleTimeUpdate}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
+                onEnded={onEnded}
             />
 
             {/* Custom Controls */}
