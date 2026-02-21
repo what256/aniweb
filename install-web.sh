@@ -50,5 +50,4 @@ fi
 
 # Make the internal install script executable and run it
 echo -e "${YELLOW}Starting Aniweb Core Installer...${NC}"
-sudo chmod +x install.sh
-sudo ./install.sh
+sudo bash ./install.sh
