@@ -119,3 +119,7 @@ Thumbs.db
 dist/
 dist-ssr/
 *.local
+
+# Reference Projects
+ani-cli/
+anime-websites/
