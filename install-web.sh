@@ -33,8 +33,8 @@ if [ -d "$TARGET_DIR/.git" ]; then
     echo -e "${YELLOW}Aniweb directory already exists at $TARGET_DIR.${NC}"
     echo -e "${YELLOW}Updating from GitHub...${NC}"
     cd "$TARGET_DIR"
-    git stash >/dev/null 2>&1 || true
-    git pull origin main || git pull origin master || true
+    sudo git fetch --all || true
+    sudo git reset --hard origin/main || sudo git reset --hard origin/master || true
 else
     echo -e "${YELLOW}Cloning Aniweb repository to $TARGET_DIR...${NC}"
     git clone https://github.com/what256/aniweb.git "$TARGET_DIR"
@@ -43,5 +43,5 @@ fi
 
 # Make the internal install script executable and run it
 echo -e "${YELLOW}Starting Aniweb Core Installer...${NC}"
-chmod +x install.sh
+sudo chmod +x install.sh
 sudo ./install.sh

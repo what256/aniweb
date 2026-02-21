@@ -38,9 +38,8 @@ fi
 # 3. Check for updates (if in a git repository)
 if [ -d ".git" ]; then
     echo -e "${YELLOW}Checking for updates from Git repository...${NC}"
-    # Stash any local changes to ensure clean pull
-    git stash >/dev/null 2>&1 || true
-    git pull origin main || git pull origin master || true
+    sudo git fetch --all || true
+    sudo git reset --hard origin/main || sudo git reset --hard origin/master || true
     echo -e "${GREEN}✓ Source code is up to date.${NC}"
 else
     echo -e "${BLUE}ℹ Not a git repository, skipping git pull.${NC}"
@@ -50,9 +49,9 @@ fi
 echo -e "${YELLOW}Preparing Aniweb containers...${NC}"
 
 # Check if containers are already running, and if so, bring them down to rebuild
-if docker compose ps | grep -q "Up"; then
+if sudo docker compose ps | grep -q "Up"; then
     echo -e "${YELLOW}Existing Aniweb installation detected. Updating and restarting...${NC}"
-    docker compose down
+    sudo docker compose down
 fi
 
 echo -e "${YELLOW}Building and starting Aniweb... (This may take a few minutes)${NC}"
