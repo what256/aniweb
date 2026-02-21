@@ -25,7 +25,12 @@ export default function Home() {
                 } else {
                     const res = await fetch('/api/anime/home');
                     const data = await res.json();
-                    setHomeData(data);
+
+                    if (data.error) {
+                        console.error("Backend sent an error:", data.error);
+                    } else if (data.spotlights) {
+                        setHomeData(data);
+                    }
 
                     if (activeProfileId) {
                         try {

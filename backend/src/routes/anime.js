@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const CONSUMET_URL = 'http://localhost:4444'; // Using local anime-api microservice
+const CONSUMET_URL = 'http://127.0.0.1:4444'; // Using local anime-api microservice
 
 /**
  * Helper to fetch and parse JSON safely
