@@ -141,23 +141,26 @@ function App() {
         setActiveProfileId(null);
     };
 
-    if (!activeProfileId) {
-        return <SelectProfile onSelectProfile={handleSelectProfile} />;
-    }
-
     return (
         <BrowserRouter>
             <div className="min-h-screen flex flex-col font-sans bg-premium-900 text-white selection:bg-premium-accent selection:text-white">
-                <Navbar onSwitchProfile={handleSwitchProfile} />
-                <main className="flex-1 w-full pt-20 flex flex-col">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/anime/:id" element={<AnimeDetails />} />
-                        <Route path="/watch/:episodeId" element={<Watch />} />
-                        <Route path="/settings" element={<Settings />} />
-                    </Routes>
-                </main>
-                <Footer />
+                {!activeProfileId ? (
+                    <SelectProfile onSelectProfile={handleSelectProfile} />
+                ) : (
+                    <>
+                        <Navbar onSwitchProfile={handleSwitchProfile} />
+                        <main className="flex-1 w-full pt-20 flex flex-col">
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/anime/:id" element={<AnimeDetails />} />
+                                <Route path="/watch/:episodeId" element={<Watch />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="*" element={<Home />} />
+                            </Routes>
+                        </main>
+                        <Footer />
+                    </>
+                )}
             </div>
         </BrowserRouter>
     );
