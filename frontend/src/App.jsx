@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Search, MonitorPlay, Settings as SettingsIcon, Menu, X, Heart, Users } from 'lucide-react';
 import Home from './pages/Home';
@@ -129,11 +129,19 @@ function Footer() {
     );
 }
 
-function App() {
+function AppContent() {
     const [activeProfileId, setActiveProfileId] = useState(localStorage.getItem('activeProfileId'));
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handleSelectProfile = (id) => {
         setActiveProfileId(id);
+        if (location.pathname === '/' || location.pathname === '/select') {
+            navigate('/');
+        } else {
+            // Let them continue to anime/:id or wherever
+            navigate(location.pathname + location.search);
+        }
     };
 
     const handleSwitchProfile = () => {
@@ -141,26 +149,32 @@ function App() {
         setActiveProfileId(null);
     };
 
+    if (!activeProfileId) {
+        return <SelectProfile onSelectProfile={handleSelectProfile} />;
+    }
+
+    return (
+        <>
+            <Navbar onSwitchProfile={handleSwitchProfile} />
+            <main className="flex-1 w-full pt-20 flex flex-col">
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/anime/:id" element={<AnimeDetails />} />
+                    <Route path="/watch/:episodeId" element={<Watch />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="*" element={<Home />} />
+                </Routes>
+            </main>
+            <Footer />
+        </>
+    );
+}
+
+function App() {
     return (
         <BrowserRouter>
             <div className="min-h-screen flex flex-col font-sans bg-premium-900 text-white selection:bg-premium-accent selection:text-white">
-                {!activeProfileId ? (
-                    <SelectProfile onSelectProfile={handleSelectProfile} />
-                ) : (
-                    <>
-                        <Navbar onSwitchProfile={handleSwitchProfile} />
-                        <main className="flex-1 w-full pt-20 flex flex-col">
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/anime/:id" element={<AnimeDetails />} />
-                                <Route path="/watch/:episodeId" element={<Watch />} />
-                                <Route path="/settings" element={<Settings />} />
-                                <Route path="*" element={<Home />} />
-                            </Routes>
-                        </main>
-                        <Footer />
-                    </>
-                )}
+                <AppContent />
             </div>
         </BrowserRouter>
     );
