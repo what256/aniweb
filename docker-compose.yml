@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   consumet:
-    image: ghcr.io/consumet/api:latest
+    image: riimuru/consumet-api:latest
     restart: unless-stopped
     ports:
       - "3000:3000"
