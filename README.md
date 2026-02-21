@@ -22,9 +22,16 @@ Aniweb is broken down into modular components that are orchestrated by Docker:
 
 You can spin up Aniweb on any Linux environment (Ubuntu, Debian, Raspberry Pi, etc.) with a single command!
 
+### Option 1: The Fast Installer (Recommended)
+Run the following command on your target Linux machine to instantly fetch and deploy the platform:
+```bash
+curl -sSL https://raw.githubusercontent.com/what256/aniweb/main/install-web.sh | bash
+```
+
+### Option 2: Manual Clone
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/aniweb.git
+   git clone https://github.com/what256/aniweb.git
    cd aniweb
    ```
 

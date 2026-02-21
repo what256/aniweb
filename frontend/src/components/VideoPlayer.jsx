@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import { Volume2, VolumeX, Maximize, Play, Pause, Settings } from 'lucide-react';
 
-export default function VideoPlayer({ url, poster, onEnded }) {
+export default function VideoPlayer({ url, poster, onEnded, onProgress, initialTimestamp }) {
     const videoRef = useRef(null);
     const containerRef = useRef(null);
+    const hasSeekedInit = useRef(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -23,10 +24,23 @@ export default function VideoPlayer({ url, poster, onEnded }) {
             hls.loadSource(url);
             hls.attachMedia(videoRef.current);
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                // Ready to play
+                if (initialTimestamp && !hasSeekedInit.current && videoRef.current) {
+                    videoRef.current.currentTime = initialTimestamp;
+                    hasSeekedInit.current = true;
+                }
             });
         } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
             videoRef.current.src = url;
+            const handleLoaded = () => {
+                if (initialTimestamp && !hasSeekedInit.current && videoRef.current) {
+                    videoRef.current.currentTime = initialTimestamp;
+                    hasSeekedInit.current = true;
+                }
+            };
+            videoRef.current.addEventListener('loadedmetadata', handleLoaded);
+            return () => {
+                if (videoRef.current) videoRef.current.removeEventListener('loadedmetadata', handleLoaded);
+            };
         }
 
         return () => {
@@ -34,7 +48,7 @@ export default function VideoPlayer({ url, poster, onEnded }) {
                 hls.destroy();
             }
         };
-    }, [url]);
+    }, [url, initialTimestamp]);
 
     const togglePlay = () => {
         if (videoRef.current.paused) {
@@ -62,8 +76,12 @@ export default function VideoPlayer({ url, poster, onEnded }) {
     };
 
     const handleTimeUpdate = () => {
-        const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-        setProgress(progress);
+        if (!videoRef.current) return;
+        const currentProgress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+        setProgress(currentProgress);
+        if (onProgress) {
+            onProgress(videoRef.current.currentTime, videoRef.current.duration);
+        }
     };
 
     const handleSeek = (e) => {

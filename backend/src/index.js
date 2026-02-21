@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const animeRoutes = require('./routes/anime');
+const profileRoutes = require('./routes/profiles');
+const historyRoutes = require('./routes/history');
 const { getConfig, updateConfig } = require('./configStore');
 
 dotenv.config();
@@ -14,6 +16,8 @@ app.use(express.json());
 
 // Main anime routes
 app.use('/api/anime', animeRoutes);
+app.use('/api/profiles', profileRoutes);
+app.use('/api/history', historyRoutes);
 
 // Settings routes
 app.get('/api/settings', (req, res) => {

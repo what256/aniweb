@@ -1,0 +1,7 @@
+{
+  "provider": "gogoanime",
+  "defaultQuality": "auto",
+  "preferredSub": "english",
+  "autoPlayNextEpisode": true,
+  "autoSkipIntro": false
+}

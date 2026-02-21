@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Save, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Save, AlertCircle, CheckCircle2, Clock, Library, Trash2 } from 'lucide-react';
 
 export default function Settings() {
     const [settings, setSettings] = useState({
@@ -13,6 +13,9 @@ export default function Settings() {
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
 
+    const activeProfileId = localStorage.getItem('activeProfileId');
+    const [stats, setStats] = useState({ totalTime: 0, seriesStarted: 0 });
+
     useEffect(() => {
         fetch('/api/settings')
             .then(res => res.json())
@@ -24,7 +27,19 @@ export default function Settings() {
                 console.error('Failed to load settings', err);
                 setLoading(false);
             });
-    }, []);
+
+        if (activeProfileId) {
+            fetch(`/api/history/${activeProfileId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.history) {
+                        const totalSeconds = data.history.reduce((acc, curr) => acc + (curr.timestamp || 0), 0);
+                        setStats({ totalTime: totalSeconds, seriesStarted: data.history.length });
+                    }
+                })
+                .catch(err => console.error("Failed to fetch history stats", err));
+        }
+    }, [activeProfileId]);
 
     const handleSave = async () => {
         setSaving(true);
@@ -63,11 +78,35 @@ export default function Settings() {
         );
     }
 
+    const formatTime = (seconds) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        return `${h}h ${m}m`;
+    };
+
     return (
-        <div className="max-w-2xl mx-auto animate-in fade-in duration-500">
+        <div className="max-w-3xl mx-auto animate-in fade-in duration-500 pb-12">
             <h1 className="text-3xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                Aniweb Settings
+                Performance & Settings
             </h1>
+
+            {/* Statistics Dashboard */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                <div className="glass-panel p-6 rounded-2xl flex items-center justify-between border-l-4 border-premium-accent">
+                    <div>
+                        <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-1">Time Watched</p>
+                        <h3 className="text-4xl font-black text-white">{formatTime(stats.totalTime)}</h3>
+                    </div>
+                    <Clock className="w-12 h-12 text-premium-accent/20" />
+                </div>
+                <div className="glass-panel p-6 rounded-2xl flex items-center justify-between border-l-4 border-purple-500">
+                    <div>
+                        <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-1">Series Started</p>
+                        <h3 className="text-4xl font-black text-white">{stats.seriesStarted}</h3>
+                    </div>
+                    <Library className="w-12 h-12 text-purple-500/20" />
+                </div>
+            </div>
 
             <div className="glass-panel p-8 rounded-2xl space-y-6">
                 {message.text && (

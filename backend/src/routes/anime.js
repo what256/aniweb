@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const CONSUMET_URL = 'http://anime-api:4444'; // Using local anime-api microservice
+const CONSUMET_URL = 'http://localhost:4444'; // Using local anime-api microservice
 
 /**
  * Helper to fetch and parse JSON safely
@@ -13,43 +13,31 @@ async function fetchApi(path) {
 }
 
 /**
- * GET /api/anime/trending
+ * GET /api/anime/home
+ * Fetches multiple arrays for the V3 Home Dashboard in one go.
  */
-router.get('/trending', async (req, res) => {
+router.get('/home', async (req, res) => {
     try {
         const data = await fetchApi('/api/');
-        if (!data.results || !data.results.trending) return res.json({ results: [] });
+        if (!data.results) return res.json({ spotlights: [], trending: [], popular: [], recent: [] });
 
-        const trending = data.results.trending.map(item => ({
-            id: item.id,
-            image: item.poster,
-            title: { english: item.title, romaji: item.japanese_title }
-        }));
-        res.json({ results: trending });
-    } catch (error) {
-        console.error('Error fetching trending anime:', error.message);
-        res.status(500).json({ error: 'Failed to fetch trending anime' });
-    }
-});
-
-/**
- * GET /api/anime/recent
- */
-router.get('/recent', async (req, res) => {
-    try {
-        const data = await fetchApi('/api/');
-        if (!data.results || !data.results.latestEpisode) return res.json({ results: [] });
-
-        const recent = data.results.latestEpisode.map(item => ({
+        const mapItem = (item) => ({
             id: item.id,
             image: item.poster,
             title: { english: item.title, romaji: item.japanese_title },
-            episodeNumber: item.tvInfo?.eps || item.tvInfo?.sub || item.tvInfo?.dub || ''
-        }));
-        res.json({ results: recent });
+            description: item.description || '',
+            episodeNumber: item.tvInfo?.eps || item.tvInfo?.sub || item.tvInfo?.dub || item.newest_episode || ''
+        });
+
+        res.json({
+            spotlights: (data.results.spotlights || []).map(mapItem),
+            trending: (data.results.trending || []).map(mapItem),
+            popular: (data.results.mostPopular || []).map(mapItem),
+            recent: (data.results.latestEpisode || []).map(mapItem)
+        });
     } catch (error) {
-        console.error('Error fetching recent anime:', error.message);
-        res.status(500).json({ error: 'Failed to fetch recent episodes' });
+        console.error('Error fetching home data:', error.message);
+        res.status(500).json({ error: 'Failed to fetch home data' });
     }
 });
 
